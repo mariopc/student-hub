@@ -1,0 +1,39 @@
+services:
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - frontend
+
+  frontend:
+    build: ./frontend
+
+  database:
+    image: postgres:16   
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:    
+      - ./db/db-data/:/var/lib/postgresql/data/
+      - ./db/init:/docker-entrypoint-initdb.d/
+
+  backend:
+    build: ./backend
+    env_file:
+      - .env
+    depends_on:
+      - database
+    volumes:
+      - ./backend/assets:/app/assets
+    
+  email-api:
+    build: ./email-api
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
