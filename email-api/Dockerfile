@@ -7,6 +7,9 @@ RUN npm install -g pnpm && pnpm i
 
 COPY . .
 
+RUN pnpm build
+
 EXPOSE 8080
 
-CMD ["pnpm", "dev", "--port", "8080"]
+CMD ["pnpm", "serve", "-s", "dist", "-l", "8080"]
+#CMD ["pnpm", "dev", "--port", "8080"]
